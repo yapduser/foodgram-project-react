@@ -8,6 +8,7 @@ services:
     volumes:
       - ../frontend/:/app/result_build/
   nginx:
+    container_name: docs
     image: nginx:1.19.3
     ports:
       - "80:80"
