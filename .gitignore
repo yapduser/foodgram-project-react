@@ -130,4 +130,4 @@ dmypy.json
 
 # .idea
 .idea
-nginx_default.conf
+/_misc/
