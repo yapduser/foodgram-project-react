@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from recipes.constants import LENGTH, MIN_VALUE_MSG
+from recipes.constants import LENGTH, MIN_VALUE_MSG, MIN_VALUE
 from recipes.validators import username_validator, color_validator
 
 
@@ -149,7 +149,7 @@ class Recipe(models.Model):
     )
     cooking_time = models.PositiveSmallIntegerField(
         verbose_name="Время приготовления",
-        validators=[MinValueValidator(MIN_VALUE_MSG)],
+        validators=[MinValueValidator(MIN_VALUE, MIN_VALUE_MSG)],
     )
     tags = models.ManyToManyField(
         Tag,
@@ -183,12 +183,13 @@ class RecipeIngredient(models.Model):
     )
     amount = models.PositiveSmallIntegerField(
         verbose_name="Количество",
-        validators=[MinValueValidator(MIN_VALUE_MSG)],
+        validators=[MinValueValidator(MIN_VALUE, MIN_VALUE_MSG)],
     )
 
     class Meta:
         verbose_name = "Ингредиент в рецепте"
         verbose_name_plural = "Ингредиенты в рецептах"
+        db_table = "recipes_recipe_ingredient"
 
     def __str__(self):
         return (
@@ -248,6 +249,7 @@ class ShoppingCart(models.Model):
     class Meta:
         verbose_name = "Список покупок"
         verbose_name_plural = "Списки покупок"
+        db_table = "recipes_shopping_cart"
         constraints = [
             models.UniqueConstraint(
                 fields=["user", "recipe"],
