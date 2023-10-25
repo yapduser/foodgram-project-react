@@ -1,7 +1,8 @@
 import re
 
-from django.conf import settings
 from rest_framework.exceptions import ValidationError
+
+from recipes.constants import USER_READ_EDIT_URL
 
 
 def username_validator(value):
@@ -16,9 +17,9 @@ def username_validator(value):
             ),
         )
 
-    if value.lower() == settings.USER_READ_EDIT_URL:
+    if value.lower() == USER_READ_EDIT_URL:
         raise ValidationError(
-            f"Использовать имя <{settings.USER_READ_EDIT_URL}> в качестве "
+            f"Использовать имя <{USER_READ_EDIT_URL}> в качестве "
             f"username запрещено."
         )
 
