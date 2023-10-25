@@ -1,6 +1,5 @@
 from collections import namedtuple
 
-EMPTY_VALUE = "не задано"
 LENGTH_NAME = namedtuple("Name", ["l_7", "l_150", "l_200", "l_254"])
 LENGTH = LENGTH_NAME(7, 150, 200, 254)
 MIN_VALUE = 1

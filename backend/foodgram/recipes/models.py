@@ -2,23 +2,23 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from recipes.constants import LENGTH, MIN_VALUE_MSG, MIN_VALUE
-from recipes.validators import username_validator, color_validator
+from .constants import LENGTH, MIN_VALUE_MSG, MIN_VALUE
+from .validators import username_validator, color_validator
 
 
 class User(AbstractUser):
     """Модель пользователя."""
 
-    email = models.EmailField(
-        verbose_name="email",
-        max_length=LENGTH.l_254,
-        unique=True,
-    )
     username = models.CharField(
         verbose_name="username",
         max_length=LENGTH.l_150,
         unique=True,
         validators=[username_validator],
+    )
+    email = models.EmailField(
+        verbose_name="email",
+        max_length=LENGTH.l_254,
+        unique=True,
     )
     first_name = models.CharField(
         verbose_name="Имя",
@@ -76,7 +76,6 @@ class Tag(models.Model):
         verbose_name="Название",
         max_length=LENGTH.l_200,
         unique=True,
-        db_index=True,
     )
     color = models.CharField(
         verbose_name="Цвет",
@@ -88,6 +87,7 @@ class Tag(models.Model):
         verbose_name="Слаг",
         max_length=LENGTH.l_200,
         unique=True,
+        db_index=True,
     )
 
     class Meta:

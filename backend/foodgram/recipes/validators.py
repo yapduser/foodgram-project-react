@@ -2,7 +2,7 @@ import re
 
 from rest_framework.exceptions import ValidationError
 
-from recipes.constants import USER_READ_EDIT_URL
+from .constants import USER_READ_EDIT_URL
 
 
 def username_validator(value):
@@ -25,7 +25,7 @@ def username_validator(value):
 
 
 def color_validator(value):
-    regex = r"^#([A-Fa-f0-9]{6}$"
+    regex = r"^#([A-Fa-f0-9]{6})$"
     if not re.match(regex, value):
         raise ValidationError(
             "Поле должно содержать HEX-код цвета в формате #RRGGBB"
