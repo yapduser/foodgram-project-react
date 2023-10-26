@@ -1,0 +1,21 @@
+### get_token_for_first_user
+POST /api/auth/token/login/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 72
+
+{
+    "email": "vpupkin@yandex.ru",
+    "password": "MySecretPas$word"
+}
+
+### get_token_for_second_user
+POST /api/auth/token/login/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 76
+
+{
+    "email": "second_user@email.org",
+    "password": "MySecretPas$word"
+}

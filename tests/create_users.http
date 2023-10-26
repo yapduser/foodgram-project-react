@@ -1,0 +1,41 @@
+### create_first_user
+POST /api/users/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 157
+
+{
+    "email": "vpupkin@yandex.ru",
+    "username": "vasya.pupkin",
+    "first_name": "Вася",
+    "last_name": "Пупкин",
+    "password": "MySecretPas$word"
+}
+
+### create_second_user
+POST /api/users/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 167
+
+{
+    "email": "second_user@email.org",
+    "username": "second-user",
+    "first_name": "Андрей",
+    "last_name": "Макаревский",
+    "password": "MySecretPas$word"
+}
+
+### create_third_user
+POST /api/users/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 169
+
+{
+    "email": "third-user@user.ru",
+    "username": "third-user-username",
+    "first_name": "Гордон",
+    "last_name": "Рамзиков",
+    "password": "MySecretPas$word"
+}

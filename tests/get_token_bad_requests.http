@@ -1,0 +1,30 @@
+### get_token_username_and_email_mismatch
+POST /api/auth/token/login/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 64
+
+{
+    "email": "second-user",
+    "password": "randomPassword"
+}
+
+### get_token_no_email
+POST /api/auth/token/login/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 38
+
+{
+    "password": "MySecretPas$word"
+}
+
+### get_token_no_password
+POST /api/auth/token/login/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 30
+
+{
+    "email": "second-user"
+}

@@ -1,0 +1,162 @@
+### user_registration_without_email
+POST /api/users/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 115
+
+{
+    "username": "NoEmail",
+    "first_name": "No",
+    "last_name": "Email",
+    "password": "MySecretPas$word"
+}
+
+### user_registration_without_username
+POST /api/users/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 136
+
+{
+    "email": "no-username@user.ru",
+    "first_name": "Username",
+    "last_name": "NotProvided",
+    "password": "MySecretPas$word"
+}
+
+### user_registration_without_first_name
+POST /api/users/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 139
+
+{
+    "username": "NoFirstName",
+    "email": "no-first-name@user.ru",
+    "last_name": "NoFirstName",
+    "password": "MySecretPas$word"
+}
+
+### user_registration_without_last_name
+POST /api/users/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 137
+
+{
+    "username": "NoLastName",
+    "email": "no-last-name@user.ru",
+    "first_name": "NoLastName",
+    "password": "MySecretPas$word"
+}
+
+### user_registration_without_password_name
+POST /api/users/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 130
+
+{
+    "username": "NoPassword",
+    "email": "no-pasword@user.ru",
+    "first_name": "NoPassword",
+    "last_name": "NoPassword"
+}
+
+### user_registration_too_long_email
+POST /api/users/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 409
+
+{
+    "username": "TooLongEmail",
+    "email": "i_have_never_seen_an_email_address_longer_than_two_hundred_and_fifty_four_characters_and_it_was_difficult_to_come_up_with_it_so_in_the_second_part_just_the_names_of_some_mail_services@yandex-google-yahoo-mailgun-protonmail-mailru-outlook-icloud-aol-neo.ru",
+    "first_name": "TooLongEmail",
+    "last_name": "TooLongEmail",
+    "password": "MySecretPas$word"
+}
+
+### user_registration_too_long_username
+POST /api/users/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 324
+
+{
+    "username": "the-username-that-is-150-characters-long-and-should-not-pass-validation-if-the-serializer-is-configured-correctly-otherwise-the-current-test-will-fail-",
+    "email": "too-long-username@user.ru",
+    "first_name": "TooLongUsername",
+    "last_name": "TooLongUsername",
+    "password": "MySecretPas$word"
+}
+
+### user_registration_too_long_first_name
+POST /api/users/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 327
+
+{
+    "username": "TooLongFirstName",
+    "email": "too-long-firt-name@user.ru",
+    "first_name": "the-username-that-is-150-characters-long-and-should-not-pass-validation-if-the-serializer-is-configured-correctly-otherwise-the-current-test-will-fail-",
+    "last_name": "TooLongFirstName",
+    "password": "MySecretPas$word"
+}
+
+### user_registration_too_long_last_name
+POST /api/users/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 325
+
+{
+    "username": "TooLongLastName",
+    "email": "too-long-last-name@user.ru",
+    "first_name": "TooLongLastName",
+    "last_name": "the-username-that-is-150-characters-long-and-should-not-pass-validation-if-the-serializer-is-configured-correctly-otherwise-the-current-test-will-fail-",
+    "password": "MySecretPas$word"
+}
+
+### user_registration_with_invalid_username
+POST /api/users/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 172
+
+{
+    "username": "InvalidU$ername",
+    "email": "invalid-username@user.ru",
+    "first_name": "Invalid",
+    "last_name": "Username",
+    "password": "MySecretPas$word"
+}
+
+### user_registration_email_in_use
+POST /api/users/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 155
+
+{
+    "email": "vpupkin@yandex.ru",
+    "username": "EmailInUse",
+    "first_name": "Email",
+    "last_name": "InUse",
+    "password": "MySecretPas$word"
+}
+
+### user_registration_username_in_use
+POST /api/users/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 166
+
+{
+    "email": "username-in-use@user.ru",
+    "username": "vasya.pupkin",
+    "first_name": "Username",
+    "last_name": "InUse",
+    "password": "MySecretPas$word"
+}

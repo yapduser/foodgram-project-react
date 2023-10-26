@@ -1,0 +1,15 @@
+### logout // User
+POST /api/auth/token/logout/ HTTP/1.1
+Host: 127.0.0.1:8000
+Authorization: Token 55eca1ea4a85cf9862710465ea4a046b75f6defc
+
+### get_token
+POST /api/auth/token/login/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Type: application/json
+Content-Length: 72
+
+{
+    "email": "vpupkin@yandex.ru",
+    "password": "MySecretPas$word"
+}
