@@ -112,9 +112,9 @@ AUTH_USER_MODEL = "recipes.User"
 REST_FRAMEWORK = {
     # TODO: Определить уровень доступа на уровне проекта IsAuthenticated
     #  или IsAuthenticatedOrReadOnly или удалить вообще.
-    # "DEFAULT_PERMISSION_CLASSES": [
-    #     "rest_framework.permissions.IsAuthenticated",
-    # ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",
+    ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
     ],
@@ -123,8 +123,15 @@ REST_FRAMEWORK = {
 }
 
 DJOSER = {
+    "LOGIN_FIELD": "email",
+    "HIDE_USERS": False,
     "SERIALIZERS": {
-        "user_create": "api.serializers.UserCreationSerializer",
+        "user_create": "api.serializers.UserSignUpSerializer",
+        "user": "api.serializers.UserGetSerializer",
+        "current_user": "api.serializers.UserGetSerializer",
     },
-    "PERMISSIONS": {},
+    "PERMISSIONS": {
+        "user_list": ["rest_framework.permissions.AllowAny"],
+        "user": ["rest_framework.permissions.AllowAny"],
+    },
 }
