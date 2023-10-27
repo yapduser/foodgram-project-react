@@ -1,14 +1,12 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
-from recipes.models import User, Subscribe
+from recipes.models import User
+from service.checks import check_subscribe
 
 
 class UserSignUpSerializer(UserCreateSerializer):
-    """Сериализатор создания пользователя.
-
-    Переопределяет порядок полей для Djoser.
-    """
+    """Сериализатор создания пользователя."""
 
     class Meta(UserCreateSerializer.Meta):
         model = User
@@ -23,7 +21,7 @@ class UserSignUpSerializer(UserCreateSerializer):
 
 
 class UserGetSerializer(UserSerializer):
-    """Сериализатор для получения информации о пользователях."""
+    """Сериализатор для получения информации о пользователе."""
 
     is_subscribed = serializers.SerializerMethodField()
 
@@ -39,10 +37,4 @@ class UserGetSerializer(UserSerializer):
         )
 
     def get_is_subscribed(self, obj):
-        request = self.context.get("request")
-        return (
-            request.user.is_authenticated
-            and Subscribe.objects.filter(
-                user=request.user, author=obj
-            ).exists()
-        )
+        return check_subscribe(self.context.get("request"), obj)
