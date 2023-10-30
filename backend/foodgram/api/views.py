@@ -1,11 +1,13 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet as DjoserUserViewSet
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from api.serializers import TagSerializer
-from recipes.models import Tag
+from api.filters import IngredientFilter
+from api.serializers import TagGetSerializer, IngredientSerializer
+from recipes.models import Tag, Ingredient
 
 
 class CustomDjoserUserViewSet(DjoserUserViewSet):
@@ -20,14 +22,21 @@ class CustomDjoserUserViewSet(DjoserUserViewSet):
 class TagViewSet(ModelViewSet):
     """Получить информацию о тегах."""
 
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
-    pagination_class = None
     http_method_names = ["get"]
+    queryset = Tag.objects.all()
+    serializer_class = TagGetSerializer
+    pagination_class = None
 
 
 class IngredientViewSet(ModelViewSet):
-    ...
+    """Получение информации о ингредиентах."""
+
+    http_method_names = ["get"]
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer
+    filter_backends = (DjangoFilterBackend, )
+    filterset_class = IngredientFilter
+    pagination_class = None
 
 
 class RecipeViewSet(ModelViewSet):
