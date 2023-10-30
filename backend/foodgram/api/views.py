@@ -11,6 +11,7 @@ from recipes.models import Tag, Ingredient
 
 
 class CustomDjoserUserViewSet(DjoserUserViewSet):
+    """Получить профиль пользователя."""
     @action(
         detail=False, methods=["GET"], permission_classes=[IsAuthenticated]
     )
@@ -29,7 +30,7 @@ class TagViewSet(ModelViewSet):
 
 
 class IngredientViewSet(ModelViewSet):
-    """Получение информации о ингредиентах."""
+    """Получить информацию о ингредиентах."""
 
     http_method_names = ["get"]
     queryset = Ingredient.objects.all()

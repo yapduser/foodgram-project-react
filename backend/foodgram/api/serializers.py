@@ -21,7 +21,7 @@ class UserSignUpSerializer(UserCreateSerializer):
 
 
 class UserGetSerializer(UserSerializer):
-    """Сериализатор для получения информации о пользователе."""
+    """Сериализатор получения информации о пользователе."""
 
     is_subscribed = serializers.SerializerMethodField()
 
@@ -41,7 +41,7 @@ class UserGetSerializer(UserSerializer):
 
 
 class TagGetSerializer(serializers.ModelSerializer):
-    """Сериализатор для получения информации о тегах."""
+    """Сериализатор получения информации о тегах."""
 
     class Meta:
         model = Tag
@@ -49,7 +49,7 @@ class TagGetSerializer(serializers.ModelSerializer):
 
 
 class IngredientSerializer(serializers.ModelSerializer):
-    """Сериализатор для работы с ингредиентами."""
+    """Сериализатор работы с ингредиентами."""
 
     class Meta:
         model = Ingredient
