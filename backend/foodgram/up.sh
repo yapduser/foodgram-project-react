@@ -26,7 +26,6 @@ add_tag "Завтрак" "#FF0000" "breakfast"
 add_tag "Обед" "#00FF00" "lunch"
 add_tag "Ужин" "#0000FF" "dinner"
 
-
 # Создать ингредиент
 add_ingredient() {
     name="$1"
@@ -37,7 +36,7 @@ add_ingredient() {
     echo "from recipes.models import Ingredient;
 Ingredient.objects.create(name='$name', measurement_unit='$measurement_unit')" | python manage.py shell
 }
-# Капусту не удалять, один из тестов ищет на букву К
+# Капусту не удалять, один из тестов ищет на букву К.
 add_ingredient "Капуста" "кг"
 add_ingredient "Молоко" "л"
 
