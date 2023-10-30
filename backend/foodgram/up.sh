@@ -36,7 +36,6 @@ add_ingredient() {
     echo "from recipes.models import Ingredient;
 Ingredient.objects.create(name='$name', measurement_unit='$measurement_unit')" | python manage.py shell
 }
-# Капусту не удалять, один из тестов ищет на букву К.
 add_ingredient "Капуста" "кг"
 add_ingredient "Молоко" "л"
 
