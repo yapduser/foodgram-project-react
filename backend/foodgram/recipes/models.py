@@ -167,7 +167,7 @@ class Recipe(models.Model):
 
 
 class RecipeIngredient(models.Model):
-    """Связующая модель рецепта и ингредиента."""
+    """Связующая модель рецепт-ингредиент."""
 
     recipe = models.ForeignKey(
         Recipe,

@@ -6,12 +6,17 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from api.filters import IngredientFilter
-from api.serializers import TagGetSerializer, IngredientSerializer
-from recipes.models import Tag, Ingredient
+from api.serializers import (
+    TagGetSerializer,
+    IngredientSerializer,
+    RecipeSerializer,
+)
+from recipes.models import Tag, Ingredient, Recipe
 
 
 class CustomDjoserUserViewSet(DjoserUserViewSet):
     """Получить профиль пользователя."""
+
     @action(
         detail=False, methods=["GET"], permission_classes=[IsAuthenticated]
     )
@@ -35,10 +40,13 @@ class IngredientViewSet(ModelViewSet):
     http_method_names = ["get"]
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    filter_backends = (DjangoFilterBackend, )
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = IngredientFilter
     pagination_class = None
 
 
 class RecipeViewSet(ModelViewSet):
-    ...
+    """..."""
+
+    queryset = Recipe.objects.all()
+    serializer_class = RecipeSerializer

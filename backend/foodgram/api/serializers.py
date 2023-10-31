@@ -1,7 +1,7 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
-from recipes.models import User, Tag, Ingredient
+from recipes.models import User, Tag, Ingredient, Recipe, RecipeIngredient
 from service.checks import check_subscribe
 
 
@@ -55,3 +55,49 @@ class IngredientSerializer(serializers.ModelSerializer):
         model = Ingredient
         fields = "__all__"
 
+
+class RecipeIngredientSerializer(serializers.ModelSerializer):
+    """Сериализатор для ингредиентов в рецепте."""
+
+    name = serializers.StringRelatedField(
+        source="ingredient",
+        read_only=True,
+    )
+    measurement_unit = serializers.StringRelatedField(
+        source="ingredient.measurement_unit",
+        read_only=True,
+    )
+
+    class Meta:
+        model = RecipeIngredient
+        fields = (
+            "id",
+            "name",
+            "measurement_unit",
+            "amount",
+        )
+
+
+class RecipeSerializer(serializers.ModelSerializer):
+    """Сериализатор работы с ингредиентами."""
+
+    tags = TagGetSerializer(many=True, read_only=True)
+    author = UserGetSerializer(read_only=True)
+    ingredients = RecipeIngredientSerializer(
+        many=True, read_only=True, source="recipe_ingredients"
+    )
+
+    class Meta:
+        model = Recipe
+        fields = (
+            "id",
+            "tags",
+            "author",
+            "ingredients",
+            # "is_favorited",
+            # "is_in_shopping_cart",
+            "name",
+            "image",
+            "text",
+            "cooking_time",
+        )
