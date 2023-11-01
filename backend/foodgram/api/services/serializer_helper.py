@@ -1,0 +1,54 @@
+import base64
+
+from django.core.files.base import ContentFile
+from rest_framework import serializers
+
+from recipes.models import RecipeIngredient, Ingredient, Subscribe
+
+
+class Base64ImageField(serializers.ImageField):
+    """Декодирование изображений."""
+
+    def to_internal_value(self, data):
+        if isinstance(data, str) and data.startswith("data:image"):
+            format, imgstr = data.split(";base64,")
+            ext = format.split("/")[-1]
+            data = ContentFile(base64.b64decode(imgstr), name="temp." + ext)
+
+        return super().to_internal_value(data)
+
+
+def check_recipe(request, obj, model):
+    return (
+        request
+        and request.user.is_authenticated
+        and model.objects.filter(recipe=obj).exists()
+    )
+
+
+def check_subscribe(request, author):
+    """Проверка подписки."""
+
+    return (
+        request.user.is_authenticated
+        and Subscribe.objects.filter(user=request.user, author=author).exists()
+    )
+
+
+def pop_tag_ingredient(validated_data):
+    ingredients = validated_data.pop("recipe_ingredients")
+    tags = validated_data.pop("tags")
+    return ingredients, tags
+
+
+def add_ingredients(ingredients, recipe):
+    """Добавить ингредиенты."""
+    ingredient_list = [
+        RecipeIngredient(
+            recipe=recipe,
+            ingredient=Ingredient.objects.get(id=ingredient.get("id")),
+            amount=ingredient.get("amount"),
+        )
+        for ingredient in ingredients
+    ]
+    RecipeIngredient.objects.bulk_create(ingredient_list)

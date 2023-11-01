@@ -2,17 +2,22 @@ from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
-from api.services import Base64ImageField, add_ingredients, check_recipe
+from api.services.serializer_helper import (
+    Base64ImageField,
+    pop_tag_ingredient,
+    add_ingredients,
+    check_subscribe,
+    check_recipe,
+)
 from recipes.models import (
     User,
-    Tag,
     Ingredient,
+    Tag,
     Recipe,
     RecipeIngredient,
     Favorite,
     ShoppingCart,
 )
-from service.checks import check_subscribe
 
 
 class UserSignUpSerializer(UserCreateSerializer):
@@ -164,16 +169,14 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         request = self.context.get("request")
-        ingredients = validated_data.pop("recipe_ingredients")
-        tags = validated_data.pop("tags")
+        ingredients, tags = pop_tag_ingredient(validated_data)
         recipe = Recipe.objects.create(author=request.user, **validated_data)
         recipe.tags.set(tags)
         add_ingredients(ingredients, recipe)
         return recipe
 
     def update(self, instance, validated_data):
-        ingredients = validated_data.pop("recipe_ingredients")
-        tags = validated_data.pop("tags")
+        ingredients, tags = pop_tag_ingredient(validated_data)
         instance.tags.clear()
         instance.tags.set(tags)
         RecipeIngredient.objects.filter(recipe=instance).delete()

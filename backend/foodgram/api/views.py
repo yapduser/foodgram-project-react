@@ -14,7 +14,8 @@ from api.serializers import (
     FavoriteSerializer,
     ShoppingCartSerializer,
 )
-from api.services import RecipeProcessor, get_shopping_cart
+from api.services.view_helper import RecipeProcessor, get_shopping_cart
+
 from recipes.models import Tag, Ingredient, Recipe, Favorite, ShoppingCart
 
 

@@ -1,31 +1,15 @@
-import base64
-
-from django.core.files.base import ContentFile
 from django.db.models import Sum
 from django.http import HttpResponse
-from rest_framework import serializers, status
+from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
-from recipes.models import Ingredient, RecipeIngredient, Recipe
-
+from recipes.models import Recipe, RecipeIngredient
 
 CREATED = status.HTTP_201_CREATED
 NO_CONTENT = status.HTTP_204_NO_CONTENT
 BAD_REQUEST = status.HTTP_400_BAD_REQUEST
-
-
-class Base64ImageField(serializers.ImageField):
-    """Декодирование изображений."""
-
-    def to_internal_value(self, data):
-        if isinstance(data, str) and data.startswith("data:image"):
-            format, imgstr = data.split(";base64,")
-            ext = format.split("/")[-1]
-            data = ContentFile(base64.b64decode(imgstr), name="temp." + ext)
-
-        return super().to_internal_value(data)
 
 
 class RecipeProcessor:
@@ -100,25 +84,3 @@ def get_shopping_cart(request):
     response = HttpResponse(shopping_list, content_type="text/plain")
     response["Content-Disposition"] = f"attachment; filename={file_name}"
     return response
-
-
-# TODO: Если будет время переработать. Собрать все с ингредиентами в класс
-def add_ingredients(ingredients, recipe):
-    """Добавить ингредиенты."""
-    ingredient_list = [
-        RecipeIngredient(
-            recipe=recipe,
-            ingredient=Ingredient.objects.get(id=ingredient.get("id")),
-            amount=ingredient.get("amount"),
-        )
-        for ingredient in ingredients
-    ]
-    RecipeIngredient.objects.bulk_create(ingredient_list)
-
-
-def check_recipe(request, obj, model):
-    return (
-        request
-        and request.user.is_authenticated
-        and model.objects.filter(recipe=obj).exists()
-    )
