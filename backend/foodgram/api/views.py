@@ -14,7 +14,7 @@ from api.serializers import (
     FavoriteSerializer,
     ShoppingCartSerializer,
 )
-from api.services import RecipeProcessor
+from api.services import RecipeProcessor, get_shopping_cart
 from recipes.models import Tag, Ingredient, Recipe, Favorite, ShoppingCart
 
 
@@ -89,6 +89,10 @@ class RecipeViewSet(ModelViewSet):
         )
         return recipe_processor.execute()
 
-    def download_shopping_cart(self):
-        # TODO: реализовать загрузку списка покупок
-        ...
+    @action(
+        detail=False,
+        methods=["get"],
+        permission_classes=[IsAuthenticated],
+    )
+    def download_shopping_cart(self, request):
+        return get_shopping_cart(request)

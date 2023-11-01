@@ -1,8 +1,9 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
 from rest_framework.validators import UniqueTogetherValidator
 
-from api.services import Base64ImageField, add_ingredients
+from api.services import Base64ImageField, add_ingredients, check_recipe
 from recipes.models import (
     User,
     Tag,
@@ -96,32 +97,24 @@ class RecipeGetSerializer(serializers.ModelSerializer):
     ingredients = RecipeIngredientSerializer(
         many=True, read_only=True, source="recipe_ingredients"
     )
-    is_favorited = serializers.SerializerMethodField()
+    is_favorited = serializers.SerializerMethodField(read_only=True)
+    is_in_shopping_cart = SerializerMethodField(read_only=True)
     image = Base64ImageField()
 
     class Meta:
         model = Recipe
-        fields = (
-            "id",
-            "tags",
-            "author",
-            "ingredients",
-            "is_favorited",
-            # "is_in_shopping_cart",
-            "name",
-            "image",
-            "text",
-            "cooking_time",
-        )
+        fields = "__all__"
+        extra_fields = ("is_favorited", "is_in_shopping_cart")
 
     def get_is_favorited(self, obj):
         """Проверить наличие рецепта в избранном."""
         request = self.context.get("request")
-        return (
-            request
-            and request.user.is_authenticated
-            and request.user.favorites.filter(recipe=obj).exists()
-        )
+        return check_recipe(request, obj, Favorite)
+
+    def get_is_in_shopping_cart(self, obj):
+        """Проверить наличие рецепта в списке покупок."""
+        request = self.context.get("request")
+        return check_recipe(request, obj, ShoppingCart)
 
 
 class IngredientPostSerializer(serializers.ModelSerializer):
@@ -202,7 +195,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
         fields = "__all__"
         validators = [
             UniqueTogetherValidator(
-                queryset=Favorite.objects.all(),
+                queryset=model.objects.all(),
                 fields=["user", "recipe"],
                 message="Рецепт уже находится в избранном",
             )
@@ -215,7 +208,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
         ).data
 
 
-class ShoppingCartSerializer(serializers.ModelSerializer):
+class ShoppingCartSerializer(FavoriteSerializer):
     """Сериализатор списка покупок."""
 
     class Meta:
@@ -223,14 +216,8 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         fields = "__all__"
         validators = [
             UniqueTogetherValidator(
-                queryset=ShoppingCart.objects.all(),
-                fields=("user", "recipe"),
+                queryset=model.objects.all(),
+                fields=["user", "recipe"],
                 message="Рецепт уже добавлен в список покупок",
             )
         ]
-
-    def to_representation(self, instance):
-        request = self.context.get("request")
-        return RecipeShortSerializer(
-            instance.recipe, context={"request": request}
-        ).data
