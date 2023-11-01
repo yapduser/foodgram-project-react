@@ -43,13 +43,12 @@ def add_recipe(request, instance, serializer_name):
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-def delete_recipe(request, model_name, instance, error_message):
+def delete_recipe(request, model, instance):
     """Удалить рецепт."""
-    if not model_name.objects.filter(
-        user=request.user, recipe=instance
-    ).exists():
+    if not model.objects.filter(user=request.user, recipe=instance).exists():
+        error_msg = "Рецепт отсутствует в избранном."
         return Response(
-            {"errors": error_message}, status=status.HTTP_400_BAD_REQUEST
+            {"errors": error_msg}, status=status.HTTP_400_BAD_REQUEST
         )
-    model_name.objects.filter(user=request.user, recipe=instance).delete()
+    model.objects.filter(user=request.user, recipe=instance).delete()
     return Response(status=status.HTTP_204_NO_CONTENT)

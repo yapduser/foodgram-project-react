@@ -67,7 +67,7 @@ class RecipeViewSet(ModelViewSet):
         permission_classes=[IsAuthenticated],
     )
     def favorite(self, request, pk):
-        """Добавить/Удалить рецепт."""
+        """Работа с рецептом в избранном. Добавить/Удалить."""
 
         if request.method == "POST":
             try:
@@ -80,8 +80,7 @@ class RecipeViewSet(ModelViewSet):
 
         if request.method == "DELETE":
             recipe = get_object_or_404(Recipe, id=pk)
-            error_message = "Рецепт отсутствует в избранном."
-            return delete_recipe(request, Favorite, recipe, error_message)
+            return delete_recipe(request, Favorite, recipe)
 
     def shopping_cart(self):
         ...

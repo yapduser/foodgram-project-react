@@ -202,7 +202,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
         validators = [
             UniqueTogetherValidator(
                 queryset=Favorite.objects.all(),
-                fields=("user", "recipe"),
+                fields=["user", "recipe"],
                 message="Рецепт уже находится в избранном",
             )
         ]
