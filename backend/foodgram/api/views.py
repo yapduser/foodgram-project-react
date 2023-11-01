@@ -53,7 +53,6 @@ class RecipeViewSet(ModelViewSet):
     """Рецепт."""
 
     queryset = Recipe.objects.all()
-    recipe_processor = RecipeProcessor()
 
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):
@@ -66,10 +65,14 @@ class RecipeViewSet(ModelViewSet):
         permission_classes=[IsAuthenticated],
     )
     def favorite(self, request, pk):
-        err_msg = "Рецепт отсутствует в избранном."
-        return self.recipe_processor.check_request_method(
-            request, pk, FavoriteSerializer, Favorite, err_msg
+        recipe_processor = RecipeProcessor(
+            serializer_name=FavoriteSerializer,
+            model=Favorite,
+            request=request,
+            pk=pk,
+            err_msg="Рецепт отсутствует в избранном.",
         )
+        return recipe_processor.execute()
 
     @action(
         detail=True,
@@ -77,7 +80,15 @@ class RecipeViewSet(ModelViewSet):
         permission_classes=[IsAuthenticated],
     )
     def shopping_cart(self, request, pk):
-        err_msg = "Рецепт отсутствует в списке покупок."
-        return self.recipe_processor.check_request_method(
-            request, pk, ShoppingCartSerializer, ShoppingCart, err_msg
+        recipe_processor = RecipeProcessor(
+            serializer_name=ShoppingCartSerializer,
+            model=ShoppingCart,
+            request=request,
+            pk=pk,
+            err_msg="Рецепт отсутствует в списке покупок.",
         )
+        return recipe_processor.execute()
+
+    def download_shopping_cart(self):
+        # TODO: реализовать загрузку списка покупок
+        ...

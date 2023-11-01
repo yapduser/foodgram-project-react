@@ -21,6 +21,57 @@ class Base64ImageField(serializers.ImageField):
         return super().to_internal_value(data)
 
 
+class RecipeProcessor:
+    """Добавить/Удалить рецепт."""
+
+    CREATED = status.HTTP_201_CREATED
+    NO_CONTENT = status.HTTP_204_NO_CONTENT
+    BAD_REQUEST = status.HTTP_400_BAD_REQUEST
+
+    def __init__(self, serializer_name, model, request, pk, err_msg):
+        self.serializer_name = serializer_name
+        self.model = model
+        self.request = request
+        self.method = request.method
+        self.user = request.user
+        self.pk = pk
+        self.err_msg = err_msg
+
+    def __add_recipe(self, recipe):
+        """Добавить рецепт."""
+        serializer = self.serializer_name(
+            data={"user": self.user.id, "recipe": recipe.id},
+            context={"request": self.request},
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=self.CREATED)
+
+    def __delete_recipe(self, recipe):
+        """Удалить рецепт."""
+        obj = self.model.objects.filter(user=self.user, recipe=recipe)
+        if obj.exists():
+            obj.delete()
+            return Response(status=self.NO_CONTENT)
+        return Response({"errors": self.err_msg}, status=self.BAD_REQUEST)
+
+    def execute(self):
+        """Проверить тип и обработать запрос."""
+        if self.method == "POST":
+            try:
+                recipe = Recipe.objects.get(id=self.pk)
+            except Recipe.DoesNotExist:
+                raise ValidationError(
+                    "Рецепт с указанным идентификатором не существует."
+                )
+            return self.__add_recipe(recipe)
+
+        if self.method == "DELETE":
+            recipe = get_object_or_404(Recipe, id=self.pk)
+            return self.__delete_recipe(recipe)
+
+
+# TODO: Если будет время переработать. Собрать все с ингредиентами в класс
 def add_ingredients(ingredients, recipe):
     """Добавить ингредиенты."""
     ingredient_list = [
@@ -32,49 +83,3 @@ def add_ingredients(ingredients, recipe):
         for ingredient in ingredients
     ]
     RecipeIngredient.objects.bulk_create(ingredient_list)
-
-
-class RecipeProcessor:
-    """Добавить/Удалить рецепт."""
-
-    # def __int__(self, serializer_name):
-
-    @staticmethod
-    def __add_recipe(request, instance, serializer_name):
-        """Добавить рецепт."""
-        serializer = serializer_name(
-            data={"user": request.user.id, "recipe": instance.id},
-            context={"request": request},
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    @staticmethod
-    def __delete_recipe(request, model, instance, error_msg):
-        """Удалить рецепт."""
-        if not model.objects.filter(
-            user=request.user, recipe=instance
-        ).exists():
-            return Response(
-                {"errors": error_msg}, status=status.HTTP_400_BAD_REQUEST
-            )
-        model.objects.filter(user=request.user, recipe=instance).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def check_request_method(
-        self, request, pk, serializer_name, model_name, err_msg
-    ):
-        """Проверить тип и обработать запрос."""
-        if request.method == "POST":
-            try:
-                recipe = Recipe.objects.get(id=pk)
-            except Recipe.DoesNotExist:
-                raise ValidationError(
-                    "Рецепт с указанным идентификатором не существует."
-                )
-            return self.__add_recipe(request, recipe, serializer_name)
-
-        if request.method == "DELETE":
-            recipe = get_object_or_404(Recipe, id=pk)
-            return self.__delete_recipe(request, model_name, recipe, err_msg)
