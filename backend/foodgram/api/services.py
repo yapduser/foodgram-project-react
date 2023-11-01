@@ -74,20 +74,6 @@ class RecipeProcessor:
             return self.__delete_recipe(recipe)
 
 
-# TODO: Если будет время переработать. Собрать все с ингредиентами в класс
-def add_ingredients(ingredients, recipe):
-    """Добавить ингредиенты."""
-    ingredient_list = [
-        RecipeIngredient(
-            recipe=recipe,
-            ingredient=Ingredient.objects.get(id=ingredient.get("id")),
-            amount=ingredient.get("amount"),
-        )
-        for ingredient in ingredients
-    ]
-    RecipeIngredient.objects.bulk_create(ingredient_list)
-
-
 def get_shopping_cart(request):
     """Получить файл со списком покупок."""
     user = request.user
@@ -114,6 +100,20 @@ def get_shopping_cart(request):
     response = HttpResponse(shopping_list, content_type="text/plain")
     response["Content-Disposition"] = f"attachment; filename={file_name}"
     return response
+
+
+# TODO: Если будет время переработать. Собрать все с ингредиентами в класс
+def add_ingredients(ingredients, recipe):
+    """Добавить ингредиенты."""
+    ingredient_list = [
+        RecipeIngredient(
+            recipe=recipe,
+            ingredient=Ingredient.objects.get(id=ingredient.get("id")),
+            amount=ingredient.get("amount"),
+        )
+        for ingredient in ingredients
+    ]
+    RecipeIngredient.objects.bulk_create(ingredient_list)
 
 
 def check_recipe(request, obj, model):

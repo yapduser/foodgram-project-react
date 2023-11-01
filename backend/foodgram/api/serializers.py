@@ -1,6 +1,5 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
-from rest_framework.fields import SerializerMethodField
 from rest_framework.validators import UniqueTogetherValidator
 
 from api.services import Base64ImageField, add_ingredients, check_recipe
@@ -92,13 +91,24 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 class RecipeGetSerializer(serializers.ModelSerializer):
     """Сериализатор получения информации о рецептах."""
 
-    tags = TagGetSerializer(many=True, read_only=True)
-    author = UserGetSerializer(read_only=True)
-    ingredients = RecipeIngredientSerializer(
-        many=True, read_only=True, source="recipe_ingredients"
+    tags = TagGetSerializer(
+        many=True,
+        read_only=True,
     )
-    is_favorited = serializers.SerializerMethodField(read_only=True)
-    is_in_shopping_cart = SerializerMethodField(read_only=True)
+    author = UserGetSerializer(
+        read_only=True,
+    )
+    ingredients = RecipeIngredientSerializer(
+        many=True,
+        read_only=True,
+        source="recipe_ingredients",
+    )
+    is_favorited = serializers.SerializerMethodField(
+        read_only=True,
+    )
+    is_in_shopping_cart = serializers.SerializerMethodField(
+        read_only=True,
+    )
     image = Base64ImageField()
 
     class Meta:
@@ -132,10 +142,12 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
     """Сериализатор создания рецептов."""
 
     tags = serializers.PrimaryKeyRelatedField(
-        queryset=Tag.objects.all(), many=True
+        queryset=Tag.objects.all(),
+        many=True,
     )
     ingredients = IngredientPostSerializer(
-        many=True, source="recipe_ingredients"
+        many=True,
+        source="recipe_ingredients",
     )
     image = Base64ImageField()
 
