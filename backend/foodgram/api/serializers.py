@@ -2,7 +2,7 @@ from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
-from api.utils import Base64ImageField, add_ingredients
+from api.services import Base64ImageField, add_ingredients
 from recipes.models import (
     User,
     Tag,
@@ -10,6 +10,7 @@ from recipes.models import (
     Recipe,
     RecipeIngredient,
     Favorite,
+    ShoppingCart,
 )
 from service.checks import check_subscribe
 
@@ -180,8 +181,8 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         return RecipeGetSerializer(instance, context=self.context).data
 
 
-class RecipeInFavoritesSerializer(serializers.ModelSerializer):
-    """Сериализатор получения информации о рецепте в избранном."""
+class RecipeShortSerializer(serializers.ModelSerializer):
+    """Сериализатор краткой информации о рецепте."""
 
     class Meta:
         model = Recipe
@@ -209,6 +210,27 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         request = self.context.get("request")
-        return RecipeInFavoritesSerializer(
+        return RecipeShortSerializer(
+            instance.recipe, context={"request": request}
+        ).data
+
+
+class ShoppingCartSerializer(serializers.ModelSerializer):
+    """Сериализатор списка покупок."""
+
+    class Meta:
+        model = ShoppingCart
+        fields = "__all__"
+        validators = [
+            UniqueTogetherValidator(
+                queryset=ShoppingCart.objects.all(),
+                fields=("user", "recipe"),
+                message="Рецепт уже добавлен в список покупок",
+            )
+        ]
+
+    def to_representation(self, instance):
+        request = self.context.get("request")
+        return RecipeShortSerializer(
             instance.recipe, context={"request": request}
         ).data

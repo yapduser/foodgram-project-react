@@ -1,8 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet as DjoserUserViewSet
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
-from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -14,13 +12,14 @@ from api.serializers import (
     RecipeGetSerializer,
     RecipeCreateUpdateSerializer,
     FavoriteSerializer,
+    ShoppingCartSerializer,
 )
-from api.utils import add_recipe, delete_recipe
-from recipes.models import Tag, Ingredient, Recipe, Favorite
+from api.services import RecipeProcessor
+from recipes.models import Tag, Ingredient, Recipe, Favorite, ShoppingCart
 
 
 class CustomDjoserUserViewSet(DjoserUserViewSet):
-    """Пользователь"""
+    """Пользователь."""
 
     @action(
         detail=False, methods=["GET"], permission_classes=[IsAuthenticated]
@@ -51,10 +50,10 @@ class IngredientViewSet(ModelViewSet):
 
 
 class RecipeViewSet(ModelViewSet):
-    # TODO: Добавить докстринг
     """Рецепт."""
 
     queryset = Recipe.objects.all()
+    recipe_processor = RecipeProcessor()
 
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):
@@ -67,20 +66,18 @@ class RecipeViewSet(ModelViewSet):
         permission_classes=[IsAuthenticated],
     )
     def favorite(self, request, pk):
-        """Работа с рецептом в избранном. Добавить/Удалить."""
+        err_msg = "Рецепт отсутствует в избранном."
+        return self.recipe_processor.check_request_method(
+            request, pk, FavoriteSerializer, Favorite, err_msg
+        )
 
-        if request.method == "POST":
-            try:
-                recipe = Recipe.objects.get(id=pk)
-            except Recipe.DoesNotExist:
-                raise ValidationError(
-                    "Рецепт с указанным идентификатором не существует",
-                )
-            return add_recipe(request, recipe, FavoriteSerializer)
-
-        if request.method == "DELETE":
-            recipe = get_object_or_404(Recipe, id=pk)
-            return delete_recipe(request, Favorite, recipe)
-
-    def shopping_cart(self):
-        ...
+    @action(
+        detail=True,
+        methods=["post", "delete"],
+        permission_classes=[IsAuthenticated],
+    )
+    def shopping_cart(self, request, pk):
+        err_msg = "Рецепт отсутствует в списке покупок."
+        return self.recipe_processor.check_request_method(
+            request, pk, ShoppingCartSerializer, ShoppingCart, err_msg
+        )
