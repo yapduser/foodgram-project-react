@@ -1,6 +1,8 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet as DjoserUserViewSet
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -9,13 +11,16 @@ from api.filters import IngredientFilter
 from api.serializers import (
     TagGetSerializer,
     IngredientSerializer,
-    RecipeSerializer,
+    RecipeGetSerializer,
+    RecipeCreateUpdateSerializer,
+    FavoriteSerializer,
 )
-from recipes.models import Tag, Ingredient, Recipe
+from api.utils import add_recipe, delete_recipe
+from recipes.models import Tag, Ingredient, Recipe, Favorite
 
 
 class CustomDjoserUserViewSet(DjoserUserViewSet):
-    """Получить профиль пользователя."""
+    """Пользователь"""
 
     @action(
         detail=False, methods=["GET"], permission_classes=[IsAuthenticated]
@@ -26,7 +31,7 @@ class CustomDjoserUserViewSet(DjoserUserViewSet):
 
 
 class TagViewSet(ModelViewSet):
-    """Получить информацию о тегах."""
+    """Тег."""
 
     http_method_names = ["get"]
     queryset = Tag.objects.all()
@@ -35,7 +40,7 @@ class TagViewSet(ModelViewSet):
 
 
 class IngredientViewSet(ModelViewSet):
-    """Получить информацию о ингредиентах."""
+    """Ингредиент."""
 
     http_method_names = ["get"]
     queryset = Ingredient.objects.all()
@@ -46,7 +51,37 @@ class IngredientViewSet(ModelViewSet):
 
 
 class RecipeViewSet(ModelViewSet):
-    """..."""
+    # TODO: Добавить докстринг
+    """Рецепт."""
 
     queryset = Recipe.objects.all()
-    serializer_class = RecipeSerializer
+
+    def get_serializer_class(self):
+        if self.action in ("list", "retrieve"):
+            return RecipeGetSerializer
+        return RecipeCreateUpdateSerializer
+
+    @action(
+        detail=True,
+        methods=["post", "delete"],
+        permission_classes=[IsAuthenticated],
+    )
+    def favorite(self, request, pk):
+        """Добавить/Удалить рецепт."""
+
+        if request.method == "POST":
+            try:
+                recipe = Recipe.objects.get(id=pk)
+            except Recipe.DoesNotExist:
+                raise ValidationError(
+                    "Рецепт с указанным идентификатором не существует",
+                )
+            return add_recipe(request, recipe, FavoriteSerializer)
+
+        if request.method == "DELETE":
+            recipe = get_object_or_404(Recipe, id=pk)
+            error_message = "Рецепт отсутствует в избранном."
+            return delete_recipe(request, Favorite, recipe, error_message)
+
+    def shopping_cart(self):
+        ...
