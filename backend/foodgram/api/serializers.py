@@ -17,6 +17,7 @@ from recipes.models import (
     RecipeIngredient,
     Favorite,
     ShoppingCart,
+    Subscribe,
 )
 
 
@@ -53,6 +54,80 @@ class UserGetSerializer(UserSerializer):
 
     def get_is_subscribed(self, obj):
         return check_subscribe(self.context.get("request"), obj)
+
+
+class UserSubscribeSerializer(serializers.ModelSerializer):
+    """Сериализатор подписки."""
+
+    class Meta:
+        model = Subscribe
+        fields = "__all__"
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Subscribe.objects.all(),
+                fields=("user", "author"),
+                message="Вы уже подписаны на этого пользователя",
+            )
+        ]
+
+    def validate(self, data):
+        request = self.context.get("request")
+        if request.user == data["author"]:
+            raise serializers.ValidationError(
+                "Нельзя подписываться на самого себя!"
+            )
+        return data
+
+    def to_representation(self, instance):
+        request = self.context.get("request")
+        return UserSubscribeRepresentSerializer(
+            instance.author, context={"request": request}
+        ).data
+
+
+class UserSubscribeRepresentSerializer(UserGetSerializer):
+    """Сериализатор получения информации о подписке."""
+
+    is_subscribed = serializers.SerializerMethodField()
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = (
+            "email",
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "is_subscribed",
+            "recipes",
+            "recipes_count",
+        )
+        read_only_fields = (
+            "email",
+            "username",
+            "first_name",
+            "last_name",
+            "is_subscribed",
+            "recipes",
+            "recipes_count",
+        )
+
+    def get_recipes(self, obj):
+        request = self.context.get("request")
+        recipes_limit = None
+        if request:
+            recipes_limit = request.query_params.get("recipes_limit")
+        recipes = obj.recipes.all()
+        if recipes_limit:
+            recipes = obj.recipes.all()[: int(recipes_limit)]
+        return RecipeShortSerializer(
+            recipes, many=True, context={"request": request}
+        ).data
+
+    def get_recipes_count(self, obj):
+        return obj.recipes.count()
 
 
 class TagGetSerializer(serializers.ModelSerializer):

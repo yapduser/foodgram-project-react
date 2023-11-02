@@ -33,7 +33,7 @@ class RecipeProcessor:
         if obj.exists():
             obj.delete()
             return Response(status=NO_CONTENT)
-        return Response({"errors": err_msg}, status=BAD_REQUEST)
+        return Response({"error": err_msg}, status=BAD_REQUEST)
 
     def execute(self, serializer_name, model, request, pk, err_msg):
         """Проверить тип и обработать запрос."""
