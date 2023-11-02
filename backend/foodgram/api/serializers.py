@@ -244,7 +244,9 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if not self.initial_data.get("ingredients"):
-            raise serializers.ValidationError("Рецепт не может быть без ингредиентов.")
+            raise serializers.ValidationError(
+                "Рецепт не может быть без ингредиентов."
+            )
         if not self.initial_data.get("tags"):
             raise serializers.ValidationError("Рецепт не может быть без тега!")
         return data
