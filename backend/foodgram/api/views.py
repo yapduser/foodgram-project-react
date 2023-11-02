@@ -52,18 +52,9 @@ class CustomDjoserUserViewSet(DjoserUserViewSet):
 class UserSubscribeView(APIView):
     """Подписка на пользователя."""
 
-    @staticmethod
-    def check_authentication(request):
-        if not request.user.is_authenticated:
-            return Response(
-                {"error": "Учетные данные не были предоставлены"},
-                status=UNAUTHORIZED,
-            )
+    permission_classes = (IsAdminAuthorOrReadOnly, )
 
     def post(self, request, user_id):
-        response = self.check_authentication(request)
-        if response:
-            return response
         author = get_object_or_404(User, id=user_id)
         serializer = UserSubscribeSerializer(
             data={"user": request.user.id, "author": author.id},
@@ -74,9 +65,6 @@ class UserSubscribeView(APIView):
         return Response(serializer.data, status=CREATED)
 
     def delete(self, request, user_id):
-        response = self.check_authentication(request)
-        if response:
-            return response
         author = get_object_or_404(User, id=user_id)
         if not Subscribe.objects.filter(
             user=request.user, author=author
