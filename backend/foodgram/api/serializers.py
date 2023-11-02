@@ -245,8 +245,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
             "cooking_time",
         )
 
-    def validate_ingredients(self, value):
-        ingredients = value
+    def validate_ingredients(self, ingredients):
         if not ingredients:
             raise ValidationError("Рецепт не может быть без ингредиентов.")
 
@@ -264,10 +263,9 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
                     "Количество ингредиента должно быть больше 0!"
                 )
             ingredients_list.append(ingredient)
-        return value
+        return ingredients
 
-    def validate_tags(self, value):
-        tags = value
+    def validate_tags(self, tags):
         if not tags:
             raise ValidationError("Рецепт не может быть без тега!")
         tags_list = []
@@ -275,7 +273,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
             if tag in tags_list:
                 raise ValidationError("Теги должны быть уникальными!")
             tags_list.append(tag)
-        return value
+        return tags
 
     def create(self, validated_data):
         request = self.context.get("request")
