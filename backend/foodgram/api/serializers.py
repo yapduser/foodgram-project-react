@@ -1,13 +1,11 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from rest_framework import serializers, status
+from rest_framework import serializers, status, request
 from rest_framework.exceptions import ValidationError
-from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.validators import UniqueTogetherValidator
 
 from api.services.serializer_helper import (
     Base64ImageField,
-    pop_tag_ingredient,
     add_ingredients,
     check_subscribe,
     check_recipe,
@@ -245,10 +243,14 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
             "cooking_time",
         )
 
-    def validate_ingredients(self, ingredients):
-        if not ingredients:
-            raise ValidationError("Рецепт не может быть без ингредиентов.")
+    def validate(self, data):
+        if not self.initial_data.get("ingredients"):
+            raise serializers.ValidationError("Рецепт не может быть без ингредиентов.")
+        if not self.initial_data.get("tags"):
+            raise serializers.ValidationError("Рецепт не может быть без тега!")
+        return data
 
+    def validate_ingredients(self, ingredients):
         ingredients_list = []
         for item in ingredients:
             try:
@@ -266,8 +268,6 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         return ingredients
 
     def validate_tags(self, tags):
-        if not tags:
-            raise ValidationError("Рецепт не может быть без тега!")
         tags_list = []
         for tag in tags:
             if tag in tags_list:

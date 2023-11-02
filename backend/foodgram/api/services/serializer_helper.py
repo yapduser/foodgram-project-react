@@ -35,12 +35,6 @@ def check_subscribe(request, author):
     )
 
 
-def pop_tag_ingredient(validated_data):
-    ingredients = validated_data.pop("recipe_ingredients")
-    tags = validated_data.pop("tags")
-    return ingredients, tags
-
-
 def add_ingredients(ingredients, recipe):
     """Добавить ингредиенты."""
     ingredient_list = [
