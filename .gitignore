@@ -132,3 +132,4 @@ dmypy.json
 .idea
 /_misc/
 media/
+dump_*
