@@ -1,7 +1,6 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from rest_framework import serializers, status, request
+from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework.response import Response
 from rest_framework.validators import UniqueTogetherValidator
 
 from api.services.serializer_helper import (
