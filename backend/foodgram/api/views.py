@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from api.filters import IngredientFilter
+from api.permissions import IsAdminAuthorOrReadOnly
 from api.serializers import (
     TagGetSerializer,
     IngredientSerializer,
@@ -121,6 +122,8 @@ class RecipeViewSet(ModelViewSet):
     """Рецепт."""
 
     queryset = Recipe.objects.all()
+    permission_classes = (IsAdminAuthorOrReadOnly, )
+    http_method_names = ['get', 'post', 'patch', 'delete']
 
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):
