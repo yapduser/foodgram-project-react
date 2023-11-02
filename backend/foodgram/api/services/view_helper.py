@@ -15,47 +15,40 @@ BAD_REQUEST = status.HTTP_400_BAD_REQUEST
 class RecipeProcessor:
     """Добавить/Удалить рецепт."""
 
-    def __init__(self, serializer_name, model, request, pk, err_msg):
-        self.serializer_name = serializer_name
-        self.model = model
-        self.request = request
-        self.method = request.method
-        self.user = request.user
-        self.pk = pk
-        self.err_msg = err_msg
-
-    def __add_recipe(self, recipe):
+    @staticmethod
+    def __add_recipe(serializer_name, request, recipe):
         """Добавить рецепт."""
-        serializer = self.serializer_name(
-            data={"user": self.user.id, "recipe": recipe.id},
-            context={"request": self.request},
+        serializer = serializer_name(
+            data={"user": request.user.id, "recipe": recipe.id},
+            context={"request": request},
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=CREATED)
 
-    def __delete_recipe(self, recipe):
+    @staticmethod
+    def __delete_recipe(model, request, err_msg, recipe):
         """Удалить рецепт."""
-        obj = self.model.objects.filter(user=self.user, recipe=recipe)
+        obj = model.objects.filter(user=request.user, recipe=recipe)
         if obj.exists():
             obj.delete()
             return Response(status=NO_CONTENT)
-        return Response({"errors": self.err_msg}, status=BAD_REQUEST)
+        return Response({"errors": err_msg}, status=BAD_REQUEST)
 
-    def execute(self):
+    def execute(self, serializer_name, model, request, pk, err_msg):
         """Проверить тип и обработать запрос."""
-        if self.method == "POST":
+        if request.method == "POST":
             try:
-                recipe = Recipe.objects.get(id=self.pk)
+                recipe = Recipe.objects.get(id=pk)
             except Recipe.DoesNotExist:
                 raise ValidationError(
                     "Рецепт с указанным идентификатором не существует."
                 )
-            return self.__add_recipe(recipe)
+            return self.__add_recipe(serializer_name, request, recipe)
 
-        if self.method == "DELETE":
-            recipe = get_object_or_404(Recipe, id=self.pk)
-            return self.__delete_recipe(recipe)
+        if request.method == "DELETE":
+            recipe = get_object_or_404(Recipe, id=pk)
+            return self.__delete_recipe(model, request, err_msg, recipe)
 
 
 def get_shopping_cart(request):
