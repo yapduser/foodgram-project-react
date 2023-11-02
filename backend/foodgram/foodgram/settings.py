@@ -59,14 +59,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "foodgram.wsgi.application"
 
-# TODO: Поменять настройки DB
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -110,11 +102,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "recipes.User"
 
 REST_FRAMEWORK = {
-    # TODO: Определить уровень доступа на уровне проекта IsAuthenticated
-    #  или IsAuthenticatedOrReadOnly или удалить вообще.
-    # "DEFAULT_PERMISSION_CLASSES": [
-    #     "rest_framework.permissions.AllowAny",
-    # ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
     ],
