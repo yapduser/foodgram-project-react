@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from api.filters import IngredientFilter
+from api.filters import IngredientFilter, RecipeFilter
 from api.permissions import IsAdminAuthorOrReadOnly
 from api.serializers import (
     TagGetSerializer,
@@ -52,7 +52,7 @@ class CustomDjoserUserViewSet(DjoserUserViewSet):
 class UserSubscribeView(APIView):
     """Подписка на пользователя."""
 
-    permission_classes = (IsAdminAuthorOrReadOnly, )
+    permission_classes = (IsAdminAuthorOrReadOnly,)
 
     def post(self, request, user_id):
         author = get_object_or_404(User, id=user_id)
@@ -110,8 +110,10 @@ class RecipeViewSet(ModelViewSet):
     """Рецепт."""
 
     queryset = Recipe.objects.all()
-    permission_classes = (IsAdminAuthorOrReadOnly, )
-    http_method_names = ['get', 'post', 'patch', 'delete']
+    permission_classes = (IsAdminAuthorOrReadOnly,)
+    http_method_names = ["get", "post", "patch", "delete"]
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipeFilter
 
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):

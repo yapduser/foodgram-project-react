@@ -1,5 +1,8 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from rest_framework import serializers
+from rest_framework import serializers, status
+from rest_framework.exceptions import ValidationError
+from rest_framework.generics import get_object_or_404
+from rest_framework.response import Response
 from rest_framework.validators import UniqueTogetherValidator
 
 from api.services.serializer_helper import (
@@ -242,16 +245,50 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
             "cooking_time",
         )
 
+    def validate_ingredients(self, value):
+        ingredients = value
+        if not ingredients:
+            raise ValidationError("Рецепт не может быть без ингредиентов.")
+
+        ingredients_list = []
+        for item in ingredients:
+            try:
+                ingredient = Ingredient.objects.get(id=item["id"])
+            except Ingredient.DoesNotExist:
+                raise ValidationError("Указан несуществующий ингредиент.")
+
+            if ingredient in ingredients_list:
+                raise ValidationError("Ингридиенты должны быть уникальными!")
+            if int(item["amount"]) <= 0:
+                raise ValidationError(
+                    "Количество ингредиента должно быть больше 0!"
+                )
+            ingredients_list.append(ingredient)
+        return value
+
+    def validate_tags(self, value):
+        tags = value
+        if not tags:
+            raise ValidationError("Рецепт не может быть без тега!")
+        tags_list = []
+        for tag in tags:
+            if tag in tags_list:
+                raise ValidationError("Теги должны быть уникальными!")
+            tags_list.append(tag)
+        return value
+
     def create(self, validated_data):
         request = self.context.get("request")
-        ingredients, tags = pop_tag_ingredient(validated_data)
+        ingredients = validated_data.pop("recipe_ingredients")
+        tags = validated_data.pop("tags")
         recipe = Recipe.objects.create(author=request.user, **validated_data)
         recipe.tags.set(tags)
         add_ingredients(ingredients, recipe)
         return recipe
 
     def update(self, instance, validated_data):
-        ingredients, tags = pop_tag_ingredient(validated_data)
+        ingredients = validated_data.pop("recipe_ingredients")
+        tags = validated_data.pop("tags")
         instance.tags.clear()
         instance.tags.set(tags)
         RecipeIngredient.objects.filter(recipe=instance).delete()
