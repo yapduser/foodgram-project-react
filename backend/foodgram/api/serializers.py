@@ -1,7 +1,6 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from rest_framework import serializers, status, request
+from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework.response import Response
 from rest_framework.validators import UniqueTogetherValidator
 
 from api.services.serializer_helper import (
@@ -245,7 +244,9 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if not self.initial_data.get("ingredients"):
-            raise serializers.ValidationError("Рецепт не может быть без ингредиентов.")
+            raise serializers.ValidationError(
+                "Рецепт не может быть без ингредиентов."
+            )
         if not self.initial_data.get("tags"):
             raise serializers.ValidationError("Рецепт не может быть без тега!")
         return data
