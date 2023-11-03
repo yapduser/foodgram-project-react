@@ -1,6 +1,6 @@
 .dockerignore
 Dockerfile
 __pycache__/
-.media/
+media/
 local_up.sh
 dump_*
