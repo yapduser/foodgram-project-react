@@ -32,10 +32,6 @@ from recipes.models import (
     Subscribe,
 )
 
-CREATED = status.HTTP_201_CREATED
-BAD_REQUEST = status.HTTP_400_BAD_REQUEST
-NO_CONTENT = status.HTTP_204_NO_CONTENT
-
 
 class CustomDjoserUserViewSet(DjoserUserViewSet):
     """Пользователь."""
@@ -61,7 +57,7 @@ class UserSubscribeView(APIView):
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, user_id):
         author = get_object_or_404(User, id=user_id)
@@ -70,10 +66,10 @@ class UserSubscribeView(APIView):
         ).exists():
             return Response(
                 {"error": "Нет подписки на этого пользователя"},
-                status=BAD_REQUEST,
+                status=status.HTTP_400_BAD_REQUEST,
             )
         Subscribe.objects.get(user=request.user.id, author=user_id).delete()
-        return Response(status=NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class UserSubscriptionsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):

@@ -7,10 +7,6 @@ from rest_framework.response import Response
 
 from recipes.models import Recipe, RecipeIngredient
 
-CREATED = status.HTTP_201_CREATED
-NO_CONTENT = status.HTTP_204_NO_CONTENT
-BAD_REQUEST = status.HTTP_400_BAD_REQUEST
-
 
 class RecipeProcessor:
     """Добавить/Удалить рецепт."""
@@ -24,7 +20,7 @@ class RecipeProcessor:
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @staticmethod
     def __delete_recipe(model, request, err_msg, recipe):
@@ -32,8 +28,8 @@ class RecipeProcessor:
         obj = model.objects.filter(user=request.user, recipe=recipe)
         if obj.exists():
             obj.delete()
-            return Response(status=NO_CONTENT)
-        return Response({"error": err_msg}, status=BAD_REQUEST)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"error": err_msg}, status=status.HTTP_400_BAD_REQUEST)
 
     def execute(self, serializer_name, model, request, pk, err_msg):
         """Проверить тип и обработать запрос."""
@@ -55,7 +51,7 @@ def get_shopping_cart(request):
     """Получить файл со списком покупок."""
     user = request.user
     if not user.carts.exists():
-        return Response(status=BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
     ingredients = (
         RecipeIngredient.objects.filter(recipe__carts__user=request.user)
