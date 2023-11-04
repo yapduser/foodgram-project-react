@@ -4,7 +4,6 @@
 python manage.py collectstatic
 cp -r /app/static/. web/static
 
-
 # Выполнить миграции
 python manage.py migrate
 
@@ -24,9 +23,6 @@ Tag.objects.create(name='$name', color='$color', slug='$slug')" | python manage.
 add_tag "Завтрак" "#FF0000" "breakfast"
 add_tag "Обед" "#00FF00" "lunch"
 add_tag "Ужин" "#0000FF" "dinner"
-
-# Загрузить ингредиент
-python manage.py load_data_csv
 
 # Запустить сервер
 gunicorn --bind 0.0.0.0:8000 foodgram.wsgi
