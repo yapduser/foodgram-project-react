@@ -2,7 +2,6 @@
 [![Main foodgram workflow](https://github.com/yapduser/foodgram-project-react/actions/workflows/main.yml/badge.svg)](https://github.com/yapduser/foodgram-project-react/actions/workflows/main.yml)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fifoodgram.sytes.net%2F&label=ifoodgram.sytes.net&link=https%3A%2F%2Fifoodgram.sytes.net%2F)](https://ifoodgram.sytes.net/)
 
-
 Данные для доступа:
 - [foodgram](https://ifoodgram.sytes.net/recipes)
 - login - admin@admin.com
@@ -67,9 +66,9 @@ ADMIN_PASSWORD=<password>
 
 Развернуть приложение:
 ```shell
-docker compose -f docker-compose.dev.yml up
+docker compose -f docker-compose.dev.yml up -d
 ```
-В процессе развертывания приложения запускается скрипт backend/foodgram/up.sh.
+В процессе развертывания приложения запускается скрипт `backend/foodgram/up.sh`.
 - Собирает статику и копирует в volume.
 - Выполняет миграции.
 - Создает суперпользователя.
@@ -172,6 +171,12 @@ sudo docker push <username>/food_back
 sudo docker push <username>/food_front
 sudo docker push <username>/food_gateway
 ```
+
+Создать на сервере парку `foodgram` 
+```shell
+mkdir /home/<user name>/foodgram
+```
+
 Перенести на удаленный сервер файлы`.env` и `docker-compose.prod.yml`.
 ```shell
 scp .env docker-compose.prod.yml <user@server-address>:/home/<user name>/foodgram
@@ -211,3 +216,31 @@ Actions secrets:
 - `secrets.SSH_PASSPHRASE`
 - `secrets.TELEGRAM_TO`
 - `secrets.TELEGRAM_TOKEN`
+
+
+## Тестовые данные:
+Папка `._misc` содержит дамп базы и изображения для демонстрационного 
+наполнения сайта.
+
+Для заполнения данными необходимо скопировать на сервер:
+- `push_dump.sh`
+- `dump_04-11-2023_02_06_31.sql`
+- `media/`
+
+Откорректировать файл `push_dump.sh` указав полный путь к media:
+`/home/<user>/foodgram/media/`
+```shell
+#!/bin/bash
+
+docker cp /home/<user>/foodgram/media/. food-back:/app/media
+cat <dump_04-11-2023_02_06_31.sql> | docker exec -i food-db psql -U postgres
+```
+
+Выполнить:
+```shell
+./push_dump.sh
+```
+
+Данные для демонстрационного доступа:
+- login - `admin@admin.com`
+- pass - `admin`
