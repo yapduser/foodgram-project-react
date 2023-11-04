@@ -14,6 +14,7 @@
 Он позволяет создавать список продуктов, которые нужно купить для приготовления 
 выбранных блюд.
 
+![Header](https://github.com/yapduser/foodgram-project-react/blob/f36436d236a31f13a34f666c4396d5475fac980d/._misc/scr.png)
 
 ## Технологии
 - Python
