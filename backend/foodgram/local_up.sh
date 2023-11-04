@@ -1,9 +1,5 @@
 #!/bin/bash
 
-ADMIN_USERNAME=admin
-ADMIN_EMAIL=admin@admin.com
-ADMIN_PASSWORD=1111
-
 # Выполнить миграции
 python manage.py migrate
 
