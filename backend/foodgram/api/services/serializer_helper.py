@@ -19,10 +19,11 @@ class Base64ImageField(serializers.ImageField):
 
 
 def check_recipe(request, obj, model):
+    """Проверка рецепта."""
     return (
         request
         and request.user.is_authenticated
-        and model.objects.filter(recipe=obj).exists()
+        and model.objects.filter(user=request.user, recipe=obj).exists()
     )
 
 
