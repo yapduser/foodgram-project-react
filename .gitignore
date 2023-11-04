@@ -131,3 +131,5 @@ dmypy.json
 # .idea
 .idea
 backend/foodgram/media
+_push_dump.sh
+_get_dump.sh
