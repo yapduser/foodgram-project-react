@@ -55,6 +55,7 @@ class RecipeAdmin(admin.ModelAdmin):
     list_filter = ("name", "author", "tags")
     list_display_links = ("name",)
     inlines = (RecipeIngredientInline,)
+    readonly_fields = ["favorites_amount"]
 
     @admin.display(description="Добавлено в избранное")
     def favorites_amount(self, obj):
