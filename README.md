@@ -173,7 +173,7 @@ sudo docker push <username>/food_front
 sudo docker push <username>/food_gateway
 ```
 
-Создать на сервере парку `foodgram` 
+Создать на сервере папку `foodgram` 
 ```shell
 mkdir /home/<user name>/foodgram
 ```
