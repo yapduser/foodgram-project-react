@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -9,6 +10,7 @@ from api.services.serializer_helper import (
     check_subscribe,
     check_recipe,
 )
+from recipes.constants import MIN_VALUE, MAX_VALUE
 from recipes.models import (
     User,
     Ingredient,
@@ -211,7 +213,10 @@ class IngredientPostSerializer(serializers.ModelSerializer):
     """Сериализатор добавления ингредиентов в рецепт."""
 
     id = serializers.IntegerField()
-    amount = serializers.IntegerField()
+    amount = serializers.IntegerField(
+        min_value=MIN_VALUE,
+        max_value=MAX_VALUE,
+    )
 
     class Meta:
         model = RecipeIngredient
@@ -230,6 +235,10 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         source="recipe_ingredients",
     )
     image = Base64ImageField()
+    cooking_time = serializers.IntegerField(
+        min_value=MIN_VALUE,
+        max_value=MAX_VALUE,
+    )
 
     class Meta:
         model = Recipe
@@ -261,19 +270,13 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
 
             if ingredient in ingredients_list:
                 raise ValidationError("Ингридиенты должны быть уникальными!")
-            if int(item["amount"]) <= 0:
-                raise ValidationError(
-                    "Количество ингредиента должно быть больше 0!"
-                )
+
             ingredients_list.append(ingredient)
         return ingredients
 
     def validate_tags(self, tags):
-        tags_list = []
-        for tag in tags:
-            if tag in tags_list:
-                raise ValidationError("Теги должны быть уникальными!")
-            tags_list.append(tag)
+        if len(set(tags)) != len(tags):
+            raise ValidationError("Теги должны быть уникальными!")
         return tags
 
     def create(self, validated_data):
