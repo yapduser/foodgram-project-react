@@ -2,11 +2,6 @@
 [![Main foodgram workflow](https://github.com/yapduser/foodgram-project-react/actions/workflows/main.yml/badge.svg)](https://github.com/yapduser/foodgram-project-react/actions/workflows/main.yml)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fifoodgram.sytes.net%2F&label=ifoodgram.sytes.net&link=https%3A%2F%2Fifoodgram.sytes.net%2F)](https://ifoodgram.sytes.net/)
 
-Данные для доступа:
-- [foodgram](https://ifoodgram.sytes.net/recipes)
-- login - admin@admin.com
-- pass - admin
-
 ***
 - [Описание](#описание)
 - [Запуск проекта локально](#запуск-проекта-локально)
@@ -249,7 +244,7 @@ cat <dump_04-11-2023_02_06_31.sql> | docker exec -i food-db psql -U postgres
 ```shell
 ./push_dump.sh
 ```
-
-Данные для демонстрационного доступа:
-- login - `admin@admin.com`
-- pass - `admin`
+Данные для доступа:
+- https://ifoodgram.sytes.net/recipes
+- login - admin@admin.com
+- pass - admin
