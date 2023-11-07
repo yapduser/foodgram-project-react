@@ -1,4 +1,3 @@
-from django.core.validators import MaxValueValidator, MinValueValidator
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -75,9 +74,7 @@ class UserSubscribeSerializer(serializers.ModelSerializer):
     def validate(self, data):
         request = self.context.get("request")
         if request.user == data["author"]:
-            raise serializers.ValidationError(
-                "Нельзя подписываться на самого себя!"
-            )
+            raise ValidationError("Нельзя подписываться на самого себя!")
         return data
 
     def to_representation(self, instance):
@@ -253,11 +250,9 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if not self.initial_data.get("ingredients"):
-            raise serializers.ValidationError(
-                "Рецепт не может быть без ингредиентов."
-            )
+            raise ValidationError("Рецепт не может быть без ингредиентов.")
         if not self.initial_data.get("tags"):
-            raise serializers.ValidationError("Рецепт не может быть без тега!")
+            raise ValidationError("Рецепт не может быть без тега!")
         return data
 
     def validate_ingredients(self, ingredients):

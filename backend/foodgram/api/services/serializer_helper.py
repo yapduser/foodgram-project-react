@@ -29,10 +29,9 @@ def check_recipe(request, obj, model):
 
 def check_subscribe(request, author):
     """Проверка подписки."""
-
     return (
         request.user.is_authenticated
-        and Subscribe.objects.filter(user=request.user, author=author).exists()
+        and request.user.follower.filter(author=author).exists()
     )
 
 
