@@ -61,13 +61,13 @@ class UserSubscribeView(APIView):
 
     def delete(self, request, user_id):
         author = get_object_or_404(User, id=user_id)
-        if not request.user.follower.filter(author=author).exists():
+        follower = request.user.follower.filter(author=author)
+        if not follower:
             return Response(
                 {"error": "Нет подписки на этого пользователя"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-        Subscribe.objects.get(user=request.user.id, author=user_id).delete()
+        follower.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
