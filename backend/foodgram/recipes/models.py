@@ -160,7 +160,7 @@ class Recipe(models.Model):
     class Meta:
         verbose_name = "Рецепт"
         verbose_name_plural = "Рецепты"
-        ordering = ["-id"]
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -190,6 +190,7 @@ class RecipeIngredient(models.Model):
         verbose_name = "Ингредиент в рецепте"
         verbose_name_plural = "Ингредиенты в рецептах"
         db_table = "recipes_recipe_ingredient"
+        ordering = ["id"]
 
     def __str__(self):
         return (
@@ -219,6 +220,7 @@ class Favorite(models.Model):
     class Meta:
         verbose_name = "Избранное"
         verbose_name_plural = "Избранное"
+        ordering = ["id"]
         constraints = [
             models.UniqueConstraint(
                 fields=["user", "recipe"],
@@ -250,6 +252,7 @@ class ShoppingCart(models.Model):
         verbose_name = "Список покупок"
         verbose_name_plural = "Списки покупок"
         db_table = "recipes_shopping_cart"
+        ordering = ["id"]
         constraints = [
             models.UniqueConstraint(
                 fields=["user", "recipe"],
