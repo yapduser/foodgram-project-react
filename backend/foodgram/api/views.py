@@ -29,7 +29,6 @@ from recipes.models import (
     Favorite,
     ShoppingCart,
     User,
-    Subscribe,
 )
 
 
