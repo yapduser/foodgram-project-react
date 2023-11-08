@@ -266,7 +266,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         data = [dict_["id"] for dict_ in ingredients]
 
         if len(set(data)) != len(data):
-            raise ValidationError("Ингридиенты должны быть уникальными!")
+            raise ValidationError("Ингредиенты должны быть уникальными!")
 
         for item in ingredients:
             try:
