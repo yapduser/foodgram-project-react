@@ -7,7 +7,6 @@ from api.services.serializer_helper import (
     Base64ImageField,
     add_ingredients,
     check_subscribe,
-    check_recipe,
 )
 from recipes.constants import MIN_VALUE, MAX_VALUE
 from recipes.models import (
@@ -198,12 +197,20 @@ class RecipeGetSerializer(serializers.ModelSerializer):
     def get_is_favorited(self, obj):
         """Проверить наличие рецепта в избранном."""
         request = self.context.get("request")
-        return check_recipe(request, obj, Favorite)
+        return (
+            request
+            and request.user.is_authenticated
+            and request.user.favorites.filter(recipe=obj).exists()
+        )
 
     def get_is_in_shopping_cart(self, obj):
         """Проверить наличие рецепта в списке покупок."""
         request = self.context.get("request")
-        return check_recipe(request, obj, ShoppingCart)
+        return (
+            request
+            and request.user.is_authenticated
+            and request.user.carts.filter(recipe=obj).exists()
+        )
 
 
 class IngredientPostSerializer(serializers.ModelSerializer):
