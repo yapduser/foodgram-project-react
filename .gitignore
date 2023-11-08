@@ -133,5 +133,4 @@ dmypy.json
 backend/foodgram/media
 _push_dump.sh
 _get_dump.sh
-._misc/
 static/
