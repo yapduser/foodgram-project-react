@@ -263,17 +263,16 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         return data
 
     def validate_ingredients(self, ingredients):
-        ingredients_list = []
+        data = [dict_["id"] for dict_ in ingredients]
+
+        if len(set(data)) != len(data):
+            raise ValidationError("Ингридиенты должны быть уникальными!")
+
         for item in ingredients:
             try:
-                ingredient = Ingredient.objects.get(id=item["id"])
+                Ingredient.objects.get(id=item["id"])
             except Ingredient.DoesNotExist:
                 raise ValidationError("Указан несуществующий ингредиент.")
-
-            if ingredient in ingredients_list:
-                raise ValidationError("Ингридиенты должны быть уникальными!")
-
-            ingredients_list.append(ingredient)
         return ingredients
 
     def validate_tags(self, tags):
