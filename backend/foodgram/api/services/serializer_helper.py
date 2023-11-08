@@ -18,6 +18,15 @@ class Base64ImageField(serializers.ImageField):
         return super().to_internal_value(data)
 
 
+def check_recipe(request, obj, model):
+    """Проверка рецепта."""
+    return (
+        request
+        and request.user.is_authenticated
+        and model.objects.filter(user=request.user, recipe=obj).exists()
+    )
+
+
 def check_subscribe(request, author):
     """Проверка подписки."""
     return (
