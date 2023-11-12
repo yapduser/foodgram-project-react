@@ -1,6 +1,6 @@
 import re
 
-from rest_framework.exceptions import ValidationError
+from django.core.exceptions import ValidationError
 
 from .constants import USER_READ_EDIT_URL
 
