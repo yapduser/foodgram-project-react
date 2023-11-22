@@ -53,19 +53,19 @@ touch .env
 # Django settings
 DEBUG=False
 SECRET_KEY=<django_secret_key>
-ALLOWED_HOSTS=127.0.0.1;localhost;
+ALLOWED_HOSTS=127.0.0.1;localhost;<example.com;xxx.xxx.xxx.xxx>
 
 # DB
-POSTGRES_USER=<user>
-POSTGRES_PASSWORD=<password>
-POSTGRES_DB=<db_name>
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=django
 DB_HOST=db
 DB_PORT=5432
 
 # Superuser
-ADMIN_USERNAME=<usename>
-ADMIN_EMAIL=<example@example.com>
-ADMIN_PASSWORD=<password>
+ADMIN_USERNAME=admin
+ADMIN_EMAIL=admin@admin.com
+ADMIN_PASSWORD=admin
 ```
 
 Развернуть приложение:
@@ -145,9 +145,9 @@ SECRET_KEY=<django_secret_key>
 ALLOWED_HOSTS=127.0.0.1;localhost;<example.com;xxx.xxx.xxx.xxx>
 
 # DB
-POSTGRES_USER=<user>
-POSTGRES_PASSWORD=<password>
-POSTGRES_DB=<db_name>
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=django
 DB_HOST=db
 DB_PORT=5432
 
@@ -157,9 +157,9 @@ FRONTEND_IMAGE=<username>/food_front
 GATEWAY_IMAGE=<username>/food_gateway
 
 # Superuser
-ADMIN_USERNAME=<usename>
-ADMIN_EMAIL=<example@example.com>
-ADMIN_PASSWORD=<password>
+ADMIN_USERNAME=admin
+ADMIN_EMAIL=admin@admin.com
+ADMIN_PASSWORD=admin
 ```
 
 Создать docker images образы:
